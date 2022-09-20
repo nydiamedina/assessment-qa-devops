@@ -13,6 +13,8 @@ const chooseHeader = document.querySelector('#choose-header')
 const yourDuoHeader = document.querySelector('#your-duo-header')
 const compDuoHeader = document.querySelector('#comp-duo-header')
 
+const baseURL = `http://localhost:3000`
+
 let choices = []
 let compDuo = []
 let playerDuo = []
@@ -118,7 +120,7 @@ const putBotBack = (id) => {
 }
 
 const drawFive = () => {
-    axios.get('/api/robots/five')
+    axios.get(`${baseURL}/api/robots/five`)
         .then(res => {
             choices = res.data.choices
             compDuo = res.data.compDuo
@@ -135,7 +137,7 @@ const duel = () => {
     renderCompDuo()
     document.querySelectorAll('.bot-btn').forEach(btn => btn.classList.add('hide'))
     setTimeout(() => {
-        axios.post('/api/duel', {compDuo, playerDuo})
+        axios.post(`${baseURL}/api/duel`, {compDuo, playerDuo})
             .then(({data}) => {
                 resultsText.textContent = data
                 playAgainBtn.classList.remove('hide')
@@ -158,7 +160,7 @@ const reset = () => {
 }
 
 const getPlayerStats = () => {
-    axios.get('/api/player')
+    axios.get(`${baseURL}/api/player`)
         .then(({data: {wins, losses}}) => {
             winsText.textContent = `Wins: ${wins}`
             lossesTest.textContent = `Losses: ${losses}`
@@ -166,7 +168,7 @@ const getPlayerStats = () => {
 }
 
 const getAllBots = () => {
-    axios.get('/api/robots')
+    axios.get(`${baseURL}/api/robots`)
         .then(({data}) => {
             allBotsDiv.innerHTML = ''
         
