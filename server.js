@@ -2,17 +2,31 @@ const express = require('express')
 const cors = require("cors")
 const path = require('path')
 const app = express()
-const {bots, playerRecord} = require('./data')
-const {shuffleArray} = require('./utils')
+const { bots, playerRecord } = require('./data')
+const { shuffleArray } = require('./utils')
 
 app.use(express.json())
 app.use(cors())
 
+// Include and initialize the rollbar library with your access token
+const Rollbar = require('rollbar')
+const rollbar = new Rollbar({
+  accessToken: '0c769baf26454f48907cb227ab93bafd',
+  captureUncaught: true,
+  captureUnhandledRejections: true,
+})
+
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, '/public/index.html'))
+})
+
 app.get('/api/robots', (req, res) => {
     try {
+        Rollbar.info('User retrieved all bots')
         res.status(200).send(botsArr)
     } catch (error) {
         console.log('ERROR GETTING BOTS', error)
+        Rollbar.error('An error occurred while getting bots')
         res.sendStatus(400)
     }
 })
@@ -22,9 +36,11 @@ app.get('/api/robots/five', (req, res) => {
         let shuffled = shuffleArray(bots)
         let choices = shuffled.slice(0, 5)
         let compDuo = shuffled.slice(6, 8)
+        Rollbar.info('User retrieved 5 random bots')
         res.status(200).send({choices, compDuo})
     } catch (error) {
         console.log('ERROR GETTING FIVE BOTS', error)
+        Rollbar.error('An error occurred while getting 5 random bots')
         res.sendStatus(400)
     }
 })
@@ -49,22 +65,27 @@ app.post('/api/duel', (req, res) => {
         // comparing the total health to determine a winner
         if (compHealthAfterAttack > playerHealthAfterAttack) {
             playerRecord.losses++
+            Rollbar.info('User has lost')
             res.status(200).send('You lost!')
         } else {
             playerRecord.losses++
+            Rollbar.info('User has won')
             res.status(200).send('You won!')
         }
     } catch (error) {
         console.log('ERROR DUELING', error)
+        Rollbar.error('An error occurred while dueling')
         res.sendStatus(400)
     }
 })
 
 app.get('/api/player', (req, res) => {
     try {
+        Rollbar.info('User retrieved their player stats')
         res.status(200).send(playerRecord)
     } catch (error) {
         console.log('ERROR GETTING PLAYER STATS', error)
+        Rollbar.error('An error occurred while getting player stats')
         res.sendStatus(400)
     }
 })
