@@ -24,6 +24,10 @@ app.get('/stylesheet', function(req, res) {
     res.sendFile(path.join(__dirname, '/public/index.css'))
 })
 
+app.get('/javascript', function(req, res) {
+    res.sendFile(path.join(__dirname, '/public/index.js'))
+})
+
 app.get('/api/robots', (req, res) => {
     try {
         Rollbar.info('User retrieved all bots')
