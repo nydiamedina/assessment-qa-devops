@@ -17,7 +17,7 @@ const rollbar = new Rollbar({
 })
 
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname, '/public/index.html'))
+    res.sendFile(path.join(__dirname, '/public'))
 })
 
 app.get('/api/robots', (req, res) => {
